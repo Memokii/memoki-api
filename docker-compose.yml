@@ -6,13 +6,15 @@ networks:
 
 services:
   api:
-    image: poeticmaniac/memoki-api:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: memoki-api
     ports:
       - "8000:8000"
     depends_on:
-      mongodb:
-        condition: service_healthy
+      # mongodb:
+      #   condition: service_healthy
       redis:
         condition: service_healthy
       rabbitmq:

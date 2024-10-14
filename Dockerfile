@@ -1,6 +1,10 @@
-FROM python:3.9-slim
+FROM python:3.11-slim
 
-WORKDIR /app
+ENV APP_HOME /api
+
+# Create the application directory and set it as the working directory
+RUN mkdir -p $APP_HOME
+WORKDIR $APP_HOME
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -12,12 +16,12 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the application
-COPY ./app /app/app
-COPY ./scripts /app/scripts
+COPY ./app ./app
+COPY ./scripts ./scripts
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
 # Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "9090"]
