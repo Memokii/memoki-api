@@ -23,5 +23,8 @@ COPY ./scripts ./scripts
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
+# Expose the port
+EXPOSE 9090
+
 # Run the application
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "9090"]

@@ -11,25 +11,17 @@ services:
       dockerfile: Dockerfile
     container_name: memoki-api
     ports:
-      - "8000:8000"
+      - "9090:9090"
     depends_on:
-      # mongodb:
-      #   condition: service_healthy
-      redis:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
+      - mongodb
+      - redis
+      - rabbitmq
     environment:
       - MONGODB_URL=mongodb://mongodb:27017/memokidb
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://rabbitmq:5672
     networks:
       - memoki-network
-    healthcheck:
-      test: curl --fail http://localhost:8000/health || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 5
 
   mongodb:
     image: mongo:latest
@@ -39,11 +31,6 @@ services:
       - mongodb_data:/data/db
     networks:
       - memoki-network
-    healthcheck:
-      test: echo 'db.stats().ok' | mongo mongodb://localhost:27017/memokidb --quiet
-      interval: 30s
-      timeout: 10s
-      retries: 5
 
   redis:
     image: redis:latest
@@ -64,11 +51,6 @@ services:
       - "15672:15672"
     networks:
       - memoki-network
-    healthcheck:
-      test: echo 'PING' | nc localhost 5672
-      interval: 30s
-      timeout: 10s
-      retries: 5
 
 volumes:
   mongodb_data:
