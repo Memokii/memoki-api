@@ -1,2 +1,2 @@
 from .core import app
-from .api import routes
+from .api import routers

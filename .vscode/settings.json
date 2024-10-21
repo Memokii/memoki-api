@@ -1,0 +1,8 @@
+{
+    "autopep8.importStrategy": "fromEnvironment",
+    "autopep8.interpreter": [
+        "./.venv/bin/python"
+    ],
+    "editor.defaultFormatter": "ms-python.autopep8",
+    "notebook.defaultFormatter": "ms-python.autopep8"
+}
