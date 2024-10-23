@@ -1,5 +1,7 @@
 from bson import ObjectId
 from pydantic import BaseModel, Field
+from typing import List, Literal
+from datetime import datetime
 
 from app.utils.shared import PyObjectId, UsernameGenerator
 
@@ -26,6 +28,27 @@ Fields:
         - notifications: User's notification settings.
         - biometrics: User's biometric settings such as fingerprint, passkey, etc.
 """
+
+class UserSettings(BaseModel):
+    preferred_language: str = Field(
+        default="english",
+        description="User's preferred language.",
+        examples=["english", "french", "yoruba", "igbo", "hausa"]
+    )
+    theme: Literal['light', 'dark'] = Field(
+        default="light",
+        description="User's preferred theme."
+    )
+    notifications: str = Field(
+        default=none,
+        description="User's notification settings."
+    )
+    biometrics: str = Field(
+        default=none,
+        description="User's biometric settings such as fingerprint, passkey, etc."
+    )
+
+
 class UserModel(BaseModel):
     # Required fields
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id", description="Id of the user.")
@@ -34,6 +57,37 @@ class UserModel(BaseModel):
         examples=["faddac_1", "edebbe_2", "bafcab_3"],
         default_factory=UsernameGenerator
     )
+    device_hash: str = Field(
+        default=none, 
+        description="An hash that identifies the user's device. It is hashed from a bunch of unique device data."
+    )
+    registered_at: datetime = Field(default_factory=datetime.now, description="Date of the user's signup.")
+    last_modified: datetime = Field(
+        default_factory=datetime.now, 
+        description="Date of the user's last profile update."
+    )
+    last_active: datetime = Field(
+        default_factory=datetime.now, 
+        description="Date of the user's last activity on the platform."
+    )
+    status: Literal['active', 'banned', 'suspended', 'deleted'] = Field(
+        default=active, 
+        description="User's status. Can be 'active', 'banned', 'suspended', 'deleted'."
+    )
+    roles: List[str] = Field(
+        default_factory=lambda: ["user"], 
+        description="List of roles that the user has. Roles define permissions.", 
+        examples=["user", "admin", "moderator"]
+    )
+    has_subscribed: bool = Field(
+        default=false, 
+        description="Flag that indicates if the user has subscribed to the platform."
+    )
+    is_verified: bool = Field(
+        default=false, 
+        description="A user is verified when they have setup biometrics (fingerprint + device registration)."
+    )
+
 
     # Optional fields
     avatar_url: str = Field(
@@ -41,5 +95,9 @@ class UserModel(BaseModel):
         examples=["https://example.com/avatar.jpg"],
         default=None,
         pattern="^https?://.*$"
+    )
+    settings: [UserSettings] = Field(
+        default_factory=UserSettings, 
+        description="User's settings. Used to store user's preferences and configurations."
     )
 
